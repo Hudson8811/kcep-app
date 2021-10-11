@@ -1,0 +1,154 @@
+extends ../layouts/default
+
+block vars
+	-
+		const page = {
+			title: 'Главная'
+		};
+
+block main
+	.overlay
+	.container
+		.car-options
+			input(type="radio" name="car-options" checked data-car-width="2,4" data-car-lenght="13,3").car-options__radio#truck
+			label(for="truck").car-options__label Еврофура
+			input(type="radio" name="car-options" data-car-width="2,2" data-car-lenght="5").car-options__radio#kamaz
+			label(for="kamaz").car-options__label Камаз
+			input(type="radio" name="car-options" data-car-width="2" data-car-lenght="3").car-options__radio#van
+			label(for="van").car-options__label Фургон
+			input(type="radio" name="car-options").car-options__radio#custom
+			label(for="custom").car-options__label Свой размер
+		.wrapper
+			aside.sidebar.sidebar-left
+				.reels-wrapper
+					.reel(data-reel-type="okko1")
+						.icon
+							img(src='images/okko1.png')
+					.reel(data-reel-type="okko2")
+						.icon
+							img(src='images/okko2.png')
+					.reel(data-reel-type="okko3")
+						.icon
+							img(src='images/okko3.png')
+					.reel(data-reel-type="okko4")
+						.icon
+							img(src='images/okko4.png' alt="№4")
+					.reel(data-reel-type="okko6")
+						.icon
+							img(src='images/okko6.png' alt="№6")
+					.reel(data-reel-type="8")
+						.icon
+							img(src='images/8.png')
+					.reel(data-reel-type="10")
+						.icon
+							img(src='images/10.png')
+					.reel(data-reel-type="12A")
+						.icon
+							img(src='images/12A.png')
+					.reel(data-reel-type="14")
+						.icon
+							img(src='images/14.png')
+					.reel(data-reel-type="14g")
+						.icon
+							img(src='images/14g.png')
+					.reel(data-reel-type="17")
+						.icon
+							img(src='images/17.png')
+					.reel(data-reel-type="17us")
+						.icon
+							img(src='images/17us.png')
+					.reel(data-reel-type="18a")
+						.icon
+							img(src='images/18a.png')
+					.reel(data-reel-type="8o")
+						.icon
+							img(src='images/8op.png')
+					.reel(data-reel-type="9o")
+						.icon
+							img(src='images/9op.png')
+					.reel(data-reel-type="10o")
+						.icon
+							img(src='images/10op.png')
+					.reel(data-reel-type="10ao")
+						.icon
+							img(src='images/10-a-op.png')
+					.reel(data-reel-type="10bo")
+						.icon
+							img(src='images/10-b-op.png')
+					.reel(data-reel-type="12Ao")
+						.icon
+							img(src='images/12-a-op.png')
+					.reel(data-reel-type="14o")
+						.icon
+							img(src='images/14op.png')
+					.reel(data-reel-type="14go")
+						.icon
+							img(src='images/14-g-op.png')
+					.reel(data-reel-type="17o")
+						.icon
+							img(src='images/17op.png')
+					.reel(data-reel-type="18o")
+						.icon
+							img(src='images/18op.png' alt="18-op")
+					.reel(data-reel-type="18ao")
+						.icon
+							img(src='images/18-a-op.png')
+					.reel(data-reel-type="18bo")
+						.icon
+							img(src='images/18-b-op.png' alt="18b-op")
+					.reel(data-reel-type="20o")
+						.icon
+							img(src='images/20op.png')
+					.reel(data-reel-type="20ao")
+						.icon
+							img(src='images/20-a-op.png')
+					.reel(data-reel-type="25o")
+						.icon
+							img(src='images/25op.png')
+			.content
+				.car
+					.car-head
+						img(src="images/truck_01.png")
+					.car-body
+						.car-line.car-line--load-top
+						.car-line.car-line--load-right
+						.car-line.car-line--load-bottom
+						.car-count.car-count--loaded
+						.car-line.car-line--total-top
+						.car-line.car-line--total-left
+						.car-line.car-line--total-bottom
+						.car-count.car-count--total 13,3 м
+						.car-line.car-line--total-width-right
+						.car-line.car-line--total-width-left
+						.car-line.car-line--total-width-bottom
+						.car-count.car-count--total-width 2,4 м
+						.car-reels
+			aside.sidebar.sidebar-right
+				.car-info
+					.car-info__block
+						.car-info__line
+					h4.car-name Еврофура
+					.car-sizes
+						.car-size
+							span.car-size__title Ширина кузова:
+							.car-size__width
+								input(type="text" readonly)
+								span М
+						.car-size
+							span.car-size__title Длина кузова:
+							.car-size__length
+								input(type="text" readonly)
+								span М
+					.car-info__load
+						.car-info__reel
+
+						| Занято:
+						span.car-info__text 0% (~0м)
+				.controls
+					.controls__block.controls__block--autocomplete
+						button.sidebar-btn.js-autocomplete Автоматическая загрузка
+						p Выберите товар
+					.controls__block.controls__block--reload
+						button.sidebar-btn.js-reload Автоматическая расстановка
+					.controls__block.controls__block--clean
+						button.sidebar-btn.js-clean Очистить
