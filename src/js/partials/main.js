@@ -427,6 +427,8 @@ $(document).ready(function() {
     })
 
     carReloadBtn.addEventListener('click', () => {
+        carReloadBtn.setAttribute('disabled',true);
+
         const items = document.querySelectorAll('.car-reel');
 
         pckry.remove( items );
@@ -461,7 +463,8 @@ $(document).ready(function() {
 
                 appendReel(newReel)
             })
-            pckry.layout()
+            pckry.layout();
+            carReloadBtn.removeAttribute('disabled');
         },100)
     })
 
@@ -500,6 +503,7 @@ $(document).ready(function() {
     })
 
     carAutoload.addEventListener('click', function() {
+        carAutoload.setAttribute('disabled',true);
         const activeReel = reelsContainer.querySelector('.reel.active');
 
         if (activeReel) {
@@ -515,6 +519,10 @@ $(document).ready(function() {
         } else {
             autoloadMessage.classList.add('active');
         }
+
+        setTimeout(function (){
+            carAutoload.removeAttribute('disabled');
+        },200);
 
     })
 
