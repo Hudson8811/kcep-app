@@ -464,7 +464,10 @@ $(document).ready(function() {
                 appendReel(newReel)
             })
             pckry.layout();
-            carReloadBtn.removeAttribute('disabled');
+
+            setTimeout(function (){
+                carReloadBtn.removeAttribute('disabled');
+            },300);
         },100)
     })
 
@@ -522,7 +525,7 @@ $(document).ready(function() {
 
         setTimeout(function (){
             carAutoload.removeAttribute('disabled');
-        },200);
+        },300);
 
     })
 
