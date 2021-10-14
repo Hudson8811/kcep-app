@@ -1,18 +1,18 @@
 $(document).ready(function() {
-    const reelsContainer = document.querySelector('.sidebar-left');
-    const carReelsContainer = document.querySelector('.car-reels');
-    const carNameTitle = document.querySelector('.car-name')
+    const reelsContainer = document.querySelector('.sidebar-left'); //боковой список элементов
+    const carReelsContainer = document.querySelector('.car-reels'); //грузовик
+    const carNameTitle = document.querySelector('.car-name')        //название грузовика в итого справа
     const carWidthInput = document.querySelector('.car-size__width>input');
     const carLengthInput = document.querySelector('.car-size__length>input');
-    const carReloadBtn = document.querySelector('.js-reload');
-    const carClearBtn = document.querySelector('.js-clean');
-    const carAutoload = document.querySelector('.js-autocomplete');
-    const carLoadLengthOutput = document.querySelector('.car-count--loaded');
-    const overlay = document.querySelector('.overlay');
-    const autoloadMessage = document.querySelector('.controls__block--autocomplete>p')
+    const carReloadBtn = document.querySelector('.js-reload');      //автоматическая расстановка
+    const carClearBtn = document.querySelector('.js-clean');        //очистка
+    const carAutoload = document.querySelector('.js-autocomplete'); //автоматическая загрузка
+    const carLoadLengthOutput = document.querySelector('.car-count--loaded');   //цифра длины возде грузовка
+    const overlay = document.querySelector('.overlay');             //прозрачный оверлей
+    const autoloadMessage = document.querySelector('.controls__block--autocomplete>p')  //подсказка при автозаполнении
 
     const pckry = new Packery( carReelsContainer, {
-        itemSelector: '.car-reel',
+        itemSelector: '.car-reel',  //элемент внутри грузовика
         columnWidth: 1,
         gutter: 0,
         transitionDuration: '0.2s'
@@ -58,11 +58,12 @@ $(document).ready(function() {
         carReelsContainer.style.minHeight = calculatedLength;
 
         pckry.layout();
+	    checkFit();
     }
 
     const setCarLoad = (action = '') => {
         pckry.shiftLayout();
-
+	    checkFit();
         setTimeout(() => {
             const carLoadLine = document.querySelector('.car-line--load-right');
             const carLoadLineBottom = document.querySelector('.car-line--load-bottom');
@@ -91,7 +92,6 @@ $(document).ready(function() {
             }
         }, 0)
     }
-
 
 
     const setCarOptions = () => {
@@ -267,6 +267,7 @@ $(document).ready(function() {
 
     }
 
+    //создание элемента в грузовик
     function createNewReel(reelType, imgSrc) {
         const newReel = document.createElement('div');
         const img = document.createElement('img');
@@ -283,6 +284,7 @@ $(document).ready(function() {
         return newReel;
     }
 
+    //проверка доступности
     function availabilityOfAddingReel(reel) {
         const containerCoords = carReelsContainer.getBoundingClientRect();
         const reelHeight = reel.style.height
@@ -328,6 +330,7 @@ $(document).ready(function() {
                 const newReel = createNewReel(reelType, imgSrc);
                 appendReel(newReel)
             }
+
             setCarLoad();
 
             this.removeEventListener('click', createReels)
@@ -337,6 +340,7 @@ $(document).ready(function() {
         }
     }
 
+    //добавление в грузовик
     function appendReel(newReel) {
         carReelsContainer.append(newReel);
         pckry.appended(newReel);
@@ -371,6 +375,16 @@ $(document).ready(function() {
         reelsContainer.append(wrap)
         button.addEventListener('click', createReels);
         input.addEventListener('input', setReelsCount)
+    }
+
+	//Проверка на влазение
+    function checkFit(){
+	    carReelsContainer.querySelectorAll('.car-reel').forEach(reel => {
+		    const isAvailable = availabilityOfAddingReel(reel);
+		    if (!isAvailable) {
+			    removeReel(reel);
+		    }
+	    });
     }
 
     reelsContainer.addEventListener('click', e => {
@@ -465,19 +479,17 @@ $(document).ready(function() {
             })
             pckry.layout();
 
+	        checkFit();
+
             setTimeout(function (){
                 carReloadBtn.removeAttribute('disabled');
             },300);
         },100)
     })
 
-    pckry.on( 'layoutComplete', () => {
-        carReelsContainer.querySelectorAll('.car-reel').forEach(reel => {
-            const isAvailable = availabilityOfAddingReel(reel);
-            if (!isAvailable) {
-                removeReel(reel);
-            }
-        })
+	//при изменении блока или содержимого
+    pckry.on( 'dragItemPositioned', () => {
+	    checkFit();
     });
 
     pckry.on('removeComplete', function(removedItems) {
@@ -505,6 +517,7 @@ $(document).ready(function() {
         }
     })
 
+	//клик по автозаполнению
     carAutoload.addEventListener('click', function() {
         carAutoload.setAttribute('disabled',true);
         const activeReel = reelsContainer.querySelector('.reel.active');
@@ -522,6 +535,8 @@ $(document).ready(function() {
         } else {
             autoloadMessage.classList.add('active');
         }
+
+	    checkFit();
 
         setTimeout(function (){
             carAutoload.removeAttribute('disabled');
