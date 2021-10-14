@@ -298,6 +298,7 @@ $(document).ready(function() {
     }
 
     function removeReel(reel) {
+    	$(reel).remove();
         pckry.remove(reel);
     }
 
@@ -435,9 +436,11 @@ $(document).ready(function() {
     })
 
     carClearBtn.addEventListener('click', () => {
+    	console.log(document.querySelectorAll('.car-reel'));
         pckry.remove( document.querySelectorAll('.car-reel') )
         pckry.shiftLayout();
         setTimeout(() => {setCarLoad('clear')}, 0)
+	    checkFit();
     })
 
     carReloadBtn.addEventListener('click', () => {
