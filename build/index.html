@@ -11,166 +11,178 @@
   <body>
     <header class="header"></header>
     <main class="main">
-      <div class="overlay"></div>
       <div class="container">
-        <div class="car-options">
-          <input class="car-options__radio" type="radio" name="car-options" checked data-car-width="2,4" data-car-lenght="13,3" id="truck">
-          <label class="car-options__label" for="truck">Еврофура</label>
-          <input class="car-options__radio" type="radio" name="car-options" data-car-width="2,2" data-car-lenght="5" id="kamaz">
-          <label class="car-options__label" for="kamaz">Камаз</label>
-          <input class="car-options__radio" type="radio" name="car-options" data-car-width="2" data-car-lenght="3" id="van">
-          <label class="car-options__label" for="van">Фургон</label>
-          <input class="car-options__radio" type="radio" name="car-options" id="custom">
-          <label class="car-options__label" for="custom">Свой размер</label>
+        <div class="truck-type">
+          <div class="truck-type__item">
+            <label>
+              <input type="radio" name="tuck_type" value="1" checked><span>Еврофура</span>
+            </label>
+            <label>
+              <input type="radio" name="tuck_type" value="2"><span>Камаз</span>
+            </label>
+            <label>
+              <input type="radio" name="tuck_type" value="3"><span>Фургон</span>
+            </label>
+            <label>
+              <input type="radio" name="tuck_type" value="4"><span>Свой размер</span>
+            </label>
+          </div>
         </div>
-        <div class="wrapper">
-          <aside class="sidebar sidebar-left">
-            <div class="reels-wrapper">
-              <div class="reel" data-reel-type="okko1">
-                <div class="icon"><img src="images/okko1.png"></div>
+        <div class="truck-calculator">
+          <div class="truck-calculator__left">
+            <div class="reels">
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="8" title="Барабан 8"><img src="images/reels/8.png"></div>
               </div>
-              <div class="reel" data-reel-type="okko2">
-                <div class="icon"><img src="images/okko2.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="10" title="Барабан 10"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="okko3">
-                <div class="icon"><img src="images/okko3.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="12a" title="Барабан 12 А"><img src="images/reels/8.png"></div>
               </div>
-              <div class="reel" data-reel-type="okko4">
-                <div class="icon"><img src="images/okko4.png" alt="№4"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="14" title="Барабан 14"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="okko6">
-                <div class="icon"><img src="images/okko6.png" alt="№6"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="14g" title="Барабан 14г"><img src="images/reels/8.png"></div>
               </div>
-              <div class="reel" data-reel-type="8">
-                <div class="icon"><img src="images/8.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="17" title="Барабан 17"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="10">
-                <div class="icon"><img src="images/10.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="17us" title="Барабан 17ус"><img src="images/reels/8.png"></div>
               </div>
-              <div class="reel" data-reel-type="12A">
-                <div class="icon"><img src="images/12A.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="18a" title="Барабан 18а"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="14">
-                <div class="icon"><img src="images/14.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt8" title="Барабан 8 (оптика, Европа)"><img src="images/reels/8.png"></div>
               </div>
-              <div class="reel" data-reel-type="14g">
-                <div class="icon"><img src="images/14g.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt9" title="Барабан 9 (оптика, Европа)"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="17">
-                <div class="icon"><img src="images/17.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt10" title="Барабан 10 (оптика, Европа)"><img src="images/reels/8.png"></div>
               </div>
-              <div class="reel" data-reel-type="17us">
-                <div class="icon"><img src="images/17us.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt10a" title="Барабан 10а (оптика, Европа)"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="18a">
-                <div class="icon"><img src="images/18a.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt10b" title="Барабан 10б (оптика, Европа)"><img src="images/reels/8.png"></div>
               </div>
-              <div class="reel" data-reel-type="8o">
-                <div class="icon"><img src="images/8op.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt12a" title="Барабан 12 А (оптика, Европа)"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="9o">
-                <div class="icon"><img src="images/9op.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt14" title="Барабан 14 (оптика, цфшк, Европа)"><img src="images/reels/8.png"></div>
               </div>
-              <div class="reel" data-reel-type="10o">
-                <div class="icon"><img src="images/10op.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt14g" title="Барабан 14г (оптика, цдшк, Европа)"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="10ao">
-                <div class="icon"><img src="images/10-a-op.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt17" title="Барабан 17 (оптика, цдшк, Европа)"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="10bo">
-                <div class="icon"><img src="images/10-b-op.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt18" title="Барабан 18 (оптика, цдшк, Европа)"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="12Ao">
-                <div class="icon"><img src="images/12-a-op.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt18a" title="Барабан 18а (оптика, цдшк, Европа)"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="14o">
-                <div class="icon"><img src="images/14op.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt18b" title="Барабан 18б (оптика, цдшк, Европа)"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="14go">
-                <div class="icon"><img src="images/14-g-op.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt20" title="Барабан 20 (оптика, Европа)"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="17o">
-                <div class="icon"><img src="images/17op.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt20a" title="Барабан 20а (оптика, Европа)"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="18o">
-                <div class="icon"><img src="images/18op.png" alt="18-op"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="opt25" title="Барабан 25 (оптика)"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="18ao">
-                <div class="icon"><img src="images/18-a-op.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="okko1" title="Катушка ОККО №1"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="18bo">
-                <div class="icon"><img src="images/18-b-op.png" alt="18b-op"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="okko1k" title="Катушка ОККО №1 картонная"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="20o">
-                <div class="icon"><img src="images/20op.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="okko2k" title="Катушка ОККО №2 картонная"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="20ao">
-                <div class="icon"><img src="images/20-a-op.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="okko3" title="Катушка ОККО №3"><img src="images/reels/10.png"></div>
               </div>
-              <div class="reel" data-reel-type="25o">
-                <div class="icon"><img src="images/25op.png"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="okko3k" title="Катушка ОККО №3 картонная"><img src="images/reels/10.png"></div>
               </div>
-            </div>
-          </aside>
-          <div class="content">
-            <div class="car">
-              <div class="car-head"><img src="images/truck_01.png"></div>
-              <div class="car-body">
-                <div class="car-line car-line--load-top"></div>
-                <div class="car-line car-line--load-right"></div>
-                <div class="car-line car-line--load-bottom"></div>
-                <div class="car-count car-count--loaded"></div>
-                <div class="car-line car-line--total-top"></div>
-                <div class="car-line car-line--total-left"></div>
-                <div class="car-line car-line--total-bottom"></div>
-                <div class="car-count car-count--total">13,3 м</div>
-                <div class="car-line car-line--total-width-right"></div>
-                <div class="car-line car-line--total-width-left"></div>
-                <div class="car-line car-line--total-width-bottom"></div>
-                <div class="car-count car-count--total-width">2,4 м</div>
-                <div class="car-reels"></div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="okko4" title="Катушка ОККО №4"><img src="images/reels/10.png"></div>
+              </div>
+              <div class="reels__item">
+                <div class="reels__item-icon" data-item="okko6k" title="Катушка ОККО №6 картонная"><img src="images/reels/10.png"></div>
               </div>
             </div>
           </div>
-          <aside class="sidebar sidebar-right">
-            <div class="car-info">
-              <div class="car-info__block">
-                <div class="car-info__line"></div>
-              </div>
-              <h4 class="car-name">Еврофура</h4>
-              <div class="car-sizes">
-                <div class="car-size"><span class="car-size__title">Ширина кузова:</span>
-                  <div class="car-size__width">
-                    <input type="text" readonly><span>М</span>
+          <div class="truck-calculator__center">
+            <div class="car">
+              <div class="car__head"><img src="images/truck_head.png"></div>
+              <div class="car__body">
+                <div class="car__content">
+                  <div class="car__content-info car-info">
+                    <!-- линии и размер занятого места-->
+                    <div class="car-info__value car-info__value--load"></div>
+                    <div class="car-info__line car-info__line--load-top"></div>
+                    <div class="car-info__line car-info__line--load-right"></div>
+                    <div class="car-info__line car-info__line--load-bottom"></div>
+                    <!-- линии длины контейнера-->
+                    <div class="car-info__value car-info__value--height">13,3 м</div>
+                    <div class="car-info__line car-info__line--height-top"></div>
+                    <div class="car-info__line car-info__line--height-left"></div>
+                    <div class="car-info__line car-info__line--height-bottom"></div>
+                    <!-- линии ширины контейнера-->
+                    <div class="car-info__value car-info__value--width">2,4 м</div>
+                    <div class="car-info__line car-info__line--width-left"></div>
+                    <div class="car-info__line car-info__line--width-right"></div>
+                    <div class="car-info__line car-info__line--width-bottom"></div>
                   </div>
+                  <div class="car__content-reels content-grid"></div>
                 </div>
-                <div class="car-size"><span class="car-size__title">Длина кузова:</span>
-                  <div class="car-size__length">
-                    <input type="text" readonly><span>М</span>
-                  </div>
-                </div>
-              </div>
-              <div class="car-info__load">
-                <div class="car-info__reel"></div>Занято:<span class="car-info__text">0% (~0м)</span>
               </div>
             </div>
-            <div class="controls">
-              <div class="controls__block controls__block--autocomplete">
-                <button class="sidebar-btn js-autocomplete">Автоматическая загрузка</button>
-                <p>Выберите товар</p>
+          </div>
+          <div class="truck-calculator__right">
+            <div class="truck-info">
+              <div class="truck-info__title"></div>
+              <div class="truck-info__size">
+                <div class="truck-info__size-item">
+                  <div class="truck-info__size-title">Ширина кузова</div>
+                  <div class="truck-info__size-input">
+                    <input type="text" maxlength="3" name="truck_width" readonly><span>м</span>
+                  </div>
+                </div>
+                <div class="truck-info__size-item">
+                  <div class="truck-info__size-title">Длина кузова</div>
+                  <div class="truck-info__size-input">
+                    <input type="text" maxlength="3" name="truck_height" readonly><span>м</span>
+                  </div>
+                </div>
               </div>
-              <div class="controls__block controls__block--reload">
-                <button class="sidebar-btn js-reload">Автоматическая расстановка</button>
+              <div class="truck-info__load">Занятая площадь: 0%</div>
+              <div class="truck-info__content"></div>
+            </div>
+            <div class="truck-control">
+              <div>
+                <button class="js-truck-sort" type="button">Автоматическая расстановка</button>
               </div>
-              <div class="controls__block controls__block--clean">
-                <button class="sidebar-btn js-clean">Очистить</button>
+              <div>
+                <button class="js-truck-clear" type="button">Очистить</button>
               </div>
             </div>
-          </aside>
+          </div>
         </div>
       </div>
     </main>
     <footer class="footer"></footer>
-    <script src="js/main.min.js?v=222"></script>
+    <script src="js/main.min.js"></script>
   </body>
 </html>

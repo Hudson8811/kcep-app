@@ -1,554 +1,405 @@
 $(document).ready(function() {
-    const reelsContainer = document.querySelector('.sidebar-left'); //боковой список элементов
-    const carReelsContainer = document.querySelector('.car-reels'); //грузовик
-    const carNameTitle = document.querySelector('.car-name')        //название грузовика в итого справа
-    const carWidthInput = document.querySelector('.car-size__width>input');
-    const carLengthInput = document.querySelector('.car-size__length>input');
-    const carReloadBtn = document.querySelector('.js-reload');      //автоматическая расстановка
-    const carClearBtn = document.querySelector('.js-clean');        //очистка
-    const carAutoload = document.querySelector('.js-autocomplete'); //автоматическая загрузка
-    const carLoadLengthOutput = document.querySelector('.car-count--loaded');   //цифра длины возде грузовка
-    const overlay = document.querySelector('.overlay');             //прозрачный оверлей
-    const autoloadMessage = document.querySelector('.controls__block--autocomplete>p')  //подсказка при автозаполнении
-
-    const pckry = new Packery( carReelsContainer, {
-        itemSelector: '.car-reel',  //элемент внутри грузовика
-        columnWidth: 1,
-        gutter: 0,
-        transitionDuration: '0.2s'
-    });
-
-
-    const getCar = () => {
-        const options = document.querySelector('.car-options');
-        const radioItems = options.querySelectorAll('input[type=radio]');
-        let carWidth, carLength, radioId;
-
-        radioItems.forEach(item => {
-            if (item.checked) {
-                carWidth = item.dataset.carWidth;
-                carLength = item.dataset.carLenght;
-                radioId = item.id;
-            }
-        })
-
-        const carName = options.querySelector(`label[for=${radioId}]`).textContent;
-        return {carName, carWidth, carLength}
-    }
-
-    const getCarSize = () => {
-        const calculatedWidth = `${(Number(carWidthInput.value.replace(',', '.')) * 100 / 2).toFixed(1)}px`;
-        const calculatedLength = `${(Number(carLengthInput.value.replace(',', '.')) * 100 / 2).toFixed(1)}px`;
-
-        return {calculatedLength, calculatedWidth}
-    }
-
-    const setCarSize = () => {
-        const carTotalLength = document.querySelector('.car-count--total');
-        const carTotalWidth = document.querySelector('.car-count--total-width');
-        const { calculatedWidth, calculatedLength } = getCarSize()
-
-        carTotalLength.textContent = `${carLengthInput.value} м`
-        carTotalWidth.textContent = `${carWidthInput.value} м`
-        carReelsContainer.style.width = calculatedWidth;
-        carReelsContainer.style.minWidth = calculatedWidth;
-        carReelsContainer.style.minWidth = calculatedWidth;
-        carReelsContainer.style.height = calculatedLength;
-        carReelsContainer.style.maxHeight = calculatedLength;
-        carReelsContainer.style.minHeight = calculatedLength;
-
-        pckry.layout();
-	    checkFit();
-    }
-
-    const setCarLoad = (action = '') => {
-        pckry.shiftLayout();
-	    checkFit();
-        setTimeout(() => {
-            const carLoadLine = document.querySelector('.car-line--load-right');
-            const carLoadLineBottom = document.querySelector('.car-line--load-bottom');
-            const carLoadText = document.querySelector('.car-info__text');
-            const carCurrentLoad = document.querySelector('.car-reels').style.height.replace('px', '');
-            const { calculatedLength } = getCarSize();
-            const carLengthMeters = (parseFloat(calculatedLength.replace('px', '')) * 2) / 100
-            const carLoadPercent = Number((parseFloat(carCurrentLoad) / parseFloat(calculatedLength.replace('px', '')) * 100).toFixed(1));
-            const carLoadNumber = parseFloat(((carLengthMeters * carLoadPercent) / 100).toFixed(1));
-
-            if (carLengthMeters >= carLoadNumber && action === '') {
-                carLoadLengthOutput.textContent = `${((carLoadPercent * carLengthMeters) / 100).toFixed(1)} м`
-                carLoadLengthOutput.style.top = `${carLoadPercent / 2.2}%`;
-                carLoadLineBottom.style.top = `${carLoadPercent + 0.2}%`;
-                carLoadLine.style.height = `${carLoadPercent}%`
-                carLoadText.textContent = `${carLoadPercent}% (~${carLoadLengthOutput.textContent})`
-            }
-
-            if (action === 'clear' || !carReelsContainer.querySelectorAll('.car-reel').length) {
-                carLoadLengthOutput.textContent = ``
-                carLoadLengthOutput.style.top = '0';
-                carLoadLineBottom.style.top = `52px`;
-                carLoadLine.style.height = `50px`
-                carReelsContainer.style.height = '0'
-                carLoadText.textContent = `0% (~0м)`
-            }
-        }, 0)
-    }
-
-
-    const setCarOptions = () => {
-        const car = getCar();
-        carNameTitle.textContent = car.carName;
-        if (car.carWidth && car.carLength) {
-            carWidthInput.value = car.carWidth;
-            carLengthInput.value = car.carLength;
-            carWidthInput.setAttribute('readonly', 'true')
-            carLengthInput.setAttribute('readonly', 'true')
-        } else {
-            carWidthInput.removeAttribute('readonly');
-            carLengthInput.removeAttribute('readonly');
-        }
-        setCarSize();
-    }
-
-    setCarOptions();
-
-    const reelSizes = {
-        'okko1': {
-                width: 22,
-                height: 25,
-            },
-        'okko2': {
-                width: 22,
-                height: 30,
-            },
-        'okko3': {
-                width: 23,
-                height: 33,
-            },
-        'okko4': {
-                width: 26,
-                height: 33,
-            },
-        'okko6': {
-                width: 31,
-                height: 37,
-            },
-        '8': {
-                width: 34,
-                height: 43,
-            },
-        '10': {
-                width: 32,
-                height: 53,
-            },
-        '12A': {
-                width: 43,
-                height: 64,
-            },
-        '14': {
-                width: 43,
-                height: 73,
-            },
-        '14g': {
-                width: 52,
-                height: 73,
-            },
-        '17': {
-                width: 45,
-                height: 89,
-            },
-        '17us': {
-                width: 47,
-                height: 89,
-            },
-        '18a': {
-                width: 66,
-                height: 94,
-            },
-        '8o': {
-                width: 35,
-                height: 43,
-            },
-        '9o': {
-                width: 26,
-                height: 48,
-            },
-        '10o': {
-                width: 34,
-                height: 53,
-            },
-        '10ao': {
-                width: 45,
-                height: 53,
-            },
-        '10bo': {
-                width: 35,
-                height: 53,
-            },
-        '12Ao': {
-                width: 45,
-                height: 64,
-            },
-        '14o': {
-                width: 45,
-                height: 73,
-            },
-        '14go': {
-                width: 55,
-                height: 73,
-            },
-        '17o': {
-                width: 48,
-                height: 88,
-            },
-        '18o': {
-                width: 59,
-                height: 94,
-            },
-        '18ao': {
-                width: 70,
-                height: 94,
-            },
-        '18bo': {
-                width: 70,
-                height: 94,
-            },
-        '20o': {
-                width: 65,
-                height: 104,
-            },
-        '20ao': {
-                width: 68,
-                height: 104,
-            },
-        '25o': {
-                width: 84,
-                height: 130,
-            }
-        }
-
-    function applyDraggable(reel) {
-        const draggie = new Draggabilly(reel);
-        pckry.bindDraggabillyEvents( draggie )
-
-        draggie.on('dragEnd', function(event, pointer) {
-            const { left, bottom, right, top } = carReelsContainer.getBoundingClientRect();
-            const pointerX = pointer.pageX;
-            const pointerY = pointer.pageY;
-            const isReelDraggedOut = pointerX < left || pointerX > right || pointerY > bottom || pointerY < top;
-
-            if (isReelDraggedOut) {
-                removeReel(reel)
-                setCarLoad()
-            }
-            pckry.layout()
-        })
-    }
-
-    function setCarLoadedReelsInfo(className, reelType) {
-        const infoBlock = document.querySelector('.car-info__reel');
-        const reels = carReelsContainer.querySelectorAll(`.${className}`);
-        const text = document.createElement('p');
-        const addedClass = `car-info__reel-${reelType}`;
-        const matches = infoBlock.querySelector(`.${addedClass}`);
-
-        text.classList.add(addedClass)
-
-        if (matches) {
-            matches.textContent = `Барабан № ${reelType} - ${reels.length} шт.`
-        } else {
-            infoBlock.append(text);
-            text.textContent = `Барабан № ${reelType} - ${reels.length} шт.`
-        }
-
-        if (reels.length === 0) {
-            text.textContent = '';
-            matches.textContent = ''
-        }
-
-    }
-
-    //создание элемента в грузовик
-    function createNewReel(reelType, imgSrc) {
-        const newReel = document.createElement('div');
-        const img = document.createElement('img');
-        img.src = imgSrc;
-
-        newReel.append(img);
-
-        newReel.style.cssText = `
-            width: ${reelSizes[reelType].width}px;
-            height: ${reelSizes[reelType].height}px;
-        `
-        newReel.classList.add('car-reel', `car-reel--type-${reelType}`)
-        setTimeout(() => {setCarLoadedReelsInfo(newReel.classList[1], reelType)}, 0)
-        return newReel;
-    }
-
-    //проверка доступности
-    function availabilityOfAddingReel(reel) {
-        const containerCoords = carReelsContainer.getBoundingClientRect();
-        const reelHeight = reel.style.height
-        const reelTop = reel.style.top
-        const reelLeft = reel.style.left
-        const reelWidth = reel.style.width
-        const reelBottomEdge = Number(reelHeight.replace('px', '')) + Number(reelTop.replace('px', ''))
-        const reelRightEdge = Number(reelWidth.replace('px', '')) + Number(reelLeft.replace('px', ''))
-
-        return !(reelBottomEdge > containerCoords.height - 5 || reelRightEdge > containerCoords.width);
-    }
-
-    function removeReel(reel) {
-    	$(reel).remove();
-        pckry.remove(reel);
-    }
-
-    let reelTypeClass,
-        reelType,
-        imgSrc;
-
-    function getReelParams(reel = null) {
-        if (reel) {
-            reelTypeClass = reel.classList[1].split('-');
-            reelType = reelTypeClass[reelTypeClass.length - 1];
-            imgSrc = reel.querySelector('img').src;
-        }
-
-        return {reelType, imgSrc}
-    }
-
-    function createReels() {
-        const input = reelsContainer.querySelector('input');
-        const count = input.value;
-
-        if (parseFloat(count)) {
-            if (input.value >= 136) {
-                input.value = '135';
-            }
-
-            const {reelType, imgSrc} = getReelParams();
-
-            for (let i = 0; i < input.value; i++) {
-                const newReel = createNewReel(reelType, imgSrc);
-                appendReel(newReel)
-            }
-
-            setCarLoad();
-
-            this.removeEventListener('click', createReels)
-            this.closest('.car-reels-count').querySelector('input').removeEventListener('input', setReelsCount)
-            this.closest('.car-reels-count').remove()
-            overlay.classList.remove('active');
-        }
-    }
-
-    //добавление в грузовик
-    function appendReel(newReel) {
-        carReelsContainer.append(newReel);
-        pckry.appended(newReel);
-        applyDraggable(newReel);
-    }
-
-    function setReelsCount(e) {
-        this.value = this.value.replace(/\D/, '')
-    }
-
-    function addReelsCountInput(positionX, positionY) {
-        const wrap = document.createElement('div');
-        const input = document.createElement('input');
-        const button = document.createElement('button');
-
-        wrap.classList.add('car-reels-count')
-        input.classList.add('car-reels-count__input')
-        input.setAttribute('type', 'text')
-        input.setAttribute('maxLength', '3')
-        button.classList.add('car-reels-count__button')
-        button.textContent = 'Добавить'
-
-        wrap.append(input)
-        wrap.append(button)
-        wrap.style.cssText = `
-            position: absolute;
-            top: ${positionY}px;
-            left: ${positionX}px;
-            z-index: 5;
-        `
-
-        reelsContainer.append(wrap)
-        button.addEventListener('click', createReels);
-        input.addEventListener('input', setReelsCount)
-    }
-
-	//Проверка на влазение
-    function checkFit(){
-	    carReelsContainer.querySelectorAll('.car-reel').forEach(reel => {
-		    const isAvailable = availabilityOfAddingReel(reel);
-		    if (!isAvailable) {
-			    removeReel(reel);
-		    }
-	    });
-    }
-
-    reelsContainer.addEventListener('click', e => {
-        const target = e.target;
-        const reel = target.closest('.reel');
-        const activeReel = reelsContainer.querySelector('.reel.active');
-
-        if (activeReel) {
-            activeReel.classList.remove('active')
-        }
-
-        if (reel) {
-            reel.classList.add('active')
-            autoloadMessage.classList.remove('active');
-        }
-    })
-
-    reelsContainer.addEventListener('dblclick', e => {
-        e.preventDefault()
-        e.stopPropagation()
-        const target = e.target;
-        const reel = target.closest('.reel');
-        if (reel) {
-            const reelType = reel.dataset.reelType;
-            const imgSrc = reel.querySelector('img').src;
-            const newReel = createNewReel(reelType, imgSrc);
-
-            appendReel(newReel)
-            setCarLoad()
-        }
-    })
-
-    document.addEventListener('change', e => {
-        const target = e.target;
-        const carOptions = target.closest('.car-options__radio');
-
-        if (carOptions) {
-            setCarOptions();
-            setCarLoad();
-        }
-    })
-
-    carWidthInput.addEventListener('input', e => {
-        setCarSize();
-    })
-    carLengthInput.addEventListener('input', e => {
-        setCarSize();
-    })
-
-    carClearBtn.addEventListener('click', () => {
-    	console.log(document.querySelectorAll('.car-reel'));
-        pckry.remove( document.querySelectorAll('.car-reel') )
-        pckry.shiftLayout();
-        setTimeout(() => {setCarLoad('clear')}, 0)
-	    checkFit();
-    })
-
-    carReloadBtn.addEventListener('click', () => {
-        carReloadBtn.setAttribute('disabled',true);
-
-        const items = document.querySelectorAll('.car-reel');
-
-        pckry.remove( items );
-        pckry.layout();
-
-        const arr = Array.from(items);
-
-
-        arr.sort((a, b) => {
-            const aHeight = a.style.height.replace('px', '');
-            const bHeight = b.style.height.replace('px', '');
-            if (aHeight < bHeight) {
-                return 1
-            }
-            if (aHeight > bHeight) {
-                return -1
-            }
-            if (aHeight === bHeight) {
-                return 0
-            }
-        })
-
-        setTimeout(()=>{
-
-            arr.forEach(item => {
-                const removedClassName = item.classList[1];
-                const typeClassArr = removedClassName.split('-');
-                const type = typeClassArr[typeClassArr.length - 1]
-                const imgSrc = item.querySelector('img').src
-
-                const newReel = createNewReel(type, imgSrc)
-
-                appendReel(newReel)
-            })
-            pckry.layout();
-
-	        checkFit();
-
-            setTimeout(function (){
-                carReloadBtn.removeAttribute('disabled');
-            },300);
-        },100)
-    })
-
-	//при изменении блока или содержимого
-    pckry.on( 'dragItemPositioned', () => {
-	    checkFit();
-    });
-
-    pckry.on('removeComplete', function(removedItems) {
-        removedItems.forEach(item => {
-            const removedClassName = item.element.classList[1];
-            const typeClassArr = removedClassName.split('-');
-            const type = typeClassArr[typeClassArr.length - 1]
-            setTimeout(() => {setCarLoadedReelsInfo(removedClassName, type)}, 0)
-        })
-    })
-
-    carReelsContainer.addEventListener('dblclick', e => {
-        const target = e.target;
-
-        const reel = target.closest('.car-reel');
-
-        if (reel) {
-            getReelParams(reel)
-
-            const positionX = e.clientX;
-            const positionY = e.clientY;
-
-            addReelsCountInput(positionX, positionY)
-            overlay.classList.add('active');
-        }
-    })
-
-	//клик по автозаполнению
-    carAutoload.addEventListener('click', function() {
-        carAutoload.setAttribute('disabled',true);
-        const activeReel = reelsContainer.querySelector('.reel.active');
-
-        if (activeReel) {
-            const reelType = activeReel.dataset.reelType;
-            const imgSrc = activeReel.querySelector('img').src;
-
-            for (let i = 0; i < 135; i++) {
-                const newReel = createNewReel(reelType, imgSrc);
-                appendReel(newReel)
-            }
-
-            setCarLoad()
-        } else {
-            autoloadMessage.classList.add('active');
-        }
-
-	    checkFit();
-
-        setTimeout(function (){
-            carAutoload.removeAttribute('disabled');
-        },300);
-
-    })
-
-    overlay.addEventListener('click', function() {
-        overlay.classList.remove('active');
-        document.querySelector('.car-reels-count').remove();
-    })
+	let trucks = {
+		1: {
+			width: 2400,
+			height: 13300,
+		},
+		2: {
+			width: 2200,
+			height: 5000,
+		},
+		3: {
+			width: 2000,
+			height: 3000,
+		},
+		4: {
+			width: 0,
+			height: 0,
+		}
+	}
+
+
+	let reels = {
+		'8': {
+			width: 665,
+			height: 855,
+		},
+		'10': {
+			width: 640,
+			height: 1055,
+		},
+		'12a': {
+			width: 860,
+			height: 1275,
+		},
+		'14': {
+			width: 860,
+			height: 1455,
+		},
+		'14g': {
+			width: 1050,
+			height: 1455,
+		},
+		'17': {
+			width: 900,
+			height: 1765,
+		},
+		'17us': {
+			width: 940,
+			height: 1765,
+		},
+		'18a': {
+			width: 1310,
+			height: 1870,
+		},
+
+		'opt8': {
+			width: 705,
+			height: 855,
+		},
+		'opt9': {
+			width: 520,
+			height: 955,
+		},
+		'opt10': {
+			width: 680,
+			height: 1055,
+		},
+		'opt10a': {
+			width: 890,
+			height: 1055,
+		},
+		'opt10b': {
+			width: 690,
+			height: 1055,
+		},
+		'opt12a': {
+			width: 900,
+			height: 1275,
+		},
+		'opt14': {
+			width: 900,
+			height: 1455,
+		},
+		'opt14g': {
+			width: 1090,
+			height: 1455,
+		},
+		'opt17': {
+			width: 950,
+			height: 1765,
+		},
+		'opt18': {
+			width: 1170,
+			height: 1870,
+		},
+		'opt18a': {
+			width: 1390,
+			height: 1870,
+		},
+		'opt18b': {
+			width: 1390,
+			height: 1870,
+		},
+		'opt20': {
+			width: 1300,
+			height: 2080,
+		},
+		'opt20a': {
+			width: 1360,
+			height: 2080,
+		},
+		'opt25': {
+			width: 1680,
+			height: 2600,
+		},
+
+		'okko1': {
+			width: 435,
+			height: 490,
+		},
+		'okko1k': {
+			width: 435,
+			height: 490,
+		},
+		'okko2k': {
+			width: 435,
+			height: 600,
+		},
+		'okko3': {
+			width: 435,
+			height: 650,
+		},
+		'okko3k': {
+			width: 435,
+			height: 650,
+		},
+		'okko4': {
+			width: 520,
+			height: 650,
+		},
+		'okko6k': {
+			width: 608,
+			height: 740,
+		},
+	}
+
+
+
+	initSizeReels();
+	function initSizeReels(){
+		$.each(reels, function(index,value) {
+			let width = parseInt(value['width'])/20;
+			let height = parseInt(value['height'])/20;
+			let reel = $('.reels__item-icon[data-item="'+index+'"]');
+			reel.css({'width':width+'px','height':height+'px'}).attr('data-size',parseInt(value['width']));
+
+			reel.parent('.reels__item').append('<div class="reels__item-form"><input type="hidden" name="index" value="'+index+'"><input type="number" min="1" maxlength="3" max="500" value="1" name="count"><button type="button" class="js-add-item" name="plus" title="Добавить">+</button><button type="button" class="js-max-item" name="max" title="Автозаполнение">MAX</button></div>');
+
+			let title = reel.attr('title');
+			if (title){
+				reel.parent('.reels__item').prepend('<div class="reels__item-title">'+title+'</div>');
+			}
+		});
+	}
+
+	setTuckSize(1);
+	function setTuckSize(value,inputChange = false){
+		if (value != 4){
+			let width = parseInt(trucks[value]['width'])/20;
+			let height = parseInt(trucks[value]['height'])/20;
+			$('.car__content').css({'width':width+'px','height':height+'px'});
+
+			$('.truck-info__size input[name="truck_width"]').val((trucks[value]['width']/1000).toFixed(1).replace(".",",")).prop('readonly',true);
+			$('.truck-info__size input[name="truck_height"]').val((trucks[value]['height']/1000).toFixed(1).replace(".",",")).prop('readonly',true);
+
+
+			$('.car-info__value--width').html((trucks[value]['width']/1000).toFixed(1).replace(".",",")+ ' м.');
+			$('.car-info__value--height').html((trucks[value]['height']/1000).toFixed(1).replace(".",",")+ ' м.');
+		} else {
+			if (inputChange){
+				console.log(123);
+			} else {
+				$('.truck-info__size input[name="truck_width"]').prop('readonly',false);
+				$('.truck-info__size input[name="truck_height"]').prop('readonly',false);
+			}
+		}
+	}
+
+	$('input[name=tuck_type]').on('change',function (){
+		let value = $(this).val();
+		setTuckSize(value);
+		gridTruck.layout();
+	});
+
+	$('.truck-info__size').on('change keyup paste',function (){
+		setTuckSize(4,true);
+	});
+
+
+
+	var gridTruck = new Muuri('.content-grid', {
+		items: '.reels__item-icon',
+		showDuration: 100,
+		showEasing: 'ease',
+		hideDuration: 100,
+		hideEasing: 'ease',
+		layoutDuration: 100,
+		layoutEasing: 'cubic-bezier(0.625, 0.225, 0.100, 0.890)',
+
+		// Drag & Drop
+		dragEnabled: true,
+		dragAxis: 'xy',
+		dragSort: true,
+		dragPlaceholder: {
+			enabled: true,
+			createElement(item) {
+				return item.getElement().cloneNode(true);
+			},
+		},
+		layout: {
+			fillGaps: true,
+			rounding: true,
+		},
+		sortData: {
+			size: function (item, element) {
+				return parseInt($(element).data('size'));
+			}
+		}
+
+	});
+
+	gridTruck.on('layoutStart', function (items, isInstant) {
+		//console.log(gridTruck);
+	});
+
+	gridTruck.on('layoutEnd', function (items) {
+		$(items).each(function (){
+			isInside(this);
+		});
+		itemsList(items);
+	});
+
+
+	gridTruck.on('dragEnd', function (item, event) {
+		let { left, bottom, right, top } = $('.car__content')[0].getBoundingClientRect();
+		let itemX = event.pageX;
+		let itemY = event.pageY;
+		let isReelDraggedOut = itemX < left || itemX > right || itemY > bottom || itemY < top;
+		if (isReelDraggedOut) {
+			gridTruck.remove([item], { removeElements: true })
+		}
+	});
+
+	gridTruck.on('add', function (items) {
+		//console.log(items);
+	});
+
+	gridTruck.on('remove', function (items, indices) {
+
+	});
+
+	function itemsList(items){
+		let list = [];
+		let listData = [];
+		$(items).each(function (){
+			list.push($(this['_element']).attr('title'))
+			listData.push($(this['_element']).attr('data-item'))
+		});
+		let result = list.reduce(function(acc, el) {
+			acc[el] = (acc[el] || 0) + 1;
+			return acc;
+		}, {});
+		let html = '';
+		$.each(result,function (index,value){
+			html += '<div class="truck-info__content-item">'+index+': '+value+' шт.</div>';
+		});
+		$('.truck-info__content').html(html);
+
+		let result2 = listData.reduce(function(acc, el) {
+			acc[el] = (acc[el] || 0) + 1;
+			return acc;
+		}, {});
+
+		let STotal = 0;
+		$.each(result2,function (index,value){
+			let S = parseInt(reels[index]['width'])* parseInt(reels[index]['height'])*value;
+			STotal += S;
+		});
+		let container = $('.car__content');
+		let containerW = container.innerWidth();
+		let containerH = container.innerHeight();
+		let SContainer = parseFloat(containerW)*parseFloat(containerH)*400;
+		let procentTotal = (STotal/SContainer)*100;
+		$('.truck-info__load').html('Занятая площадь: '+procentTotal.toFixed(1)+'%');
+	}
+
+
+	function isInside(item) {
+		let container = $('.car__content');
+		let containerW = container.innerWidth();
+		let containerH = container.innerHeight();
+		let itemX = item['_tX'];
+		let itemY = item['_tY'];
+		let itemW = item['_width'];
+		let itemH = item['_height'];
+		let isInside = itemX+itemW <= containerW && itemY+itemH <= containerH;
+		if (!isInside){
+			gridTruck.remove([item], { removeElements: true })
+		}
+	}
+
+
+	function updateLayout() {
+		//const { layout } = gridTruck._settings;
+		//layout.fillGaps = true;
+		gridTruck.sort('size:desc');
+		gridTruck.layout();
+
+	}
+
+
+	$('.js-truck-sort').on('click',function (){
+		$(this).prop('disabled', true);
+		updateLayout();
+
+		setTimeout(function (){
+			$('.js-truck-sort').prop('disabled', false);
+		},300);
+	});
+	$('.js-truck-clear').on('click',function (){
+		$(this).prop('disabled', true);
+		gridTruck.remove(gridTruck.getItems(), { removeElements: true })
+
+		setTimeout(function (){
+			$('.js-truck-clear').prop('disabled', false);
+		},300);
+	});
+
+
+
+	$('.reels > .reels__item').on('click',function (){
+		if (!$(this).hasClass('active')){
+			$(this).addClass('active').siblings('.reels__item').removeClass('active').find('.reels__item-form').slideUp(100);
+			$(this).find('.reels__item-form').slideDown({
+				duration: 100,
+				start: function () {
+					$(this).css({
+						display: "flex"
+					})
+				}
+			});
+		}
+	});
+
+	$('.reels > .reels__item').on('dblclick',function (e){
+		if ( $(e.target).closest('.reels__item-form').length ) {
+			// клик внутри элемента
+			return;
+		} else {
+			let item = $(this).find('.reels__item-icon').data('item');
+			addItem(item);
+		}
+	});
+
+	$(document).on('click','.js-add-item',function (){
+		event.preventDefault();
+		let index = $(this).siblings('input[name="index"]').val();
+		let count = parseInt($(this).siblings('input[name="count"]').val());
+		if (count > 0){
+			if (count > 500) count = 500;
+			addItem(index,count);
+		}
+	});
+
+	$(document).on('click','.js-max-item',function (){
+		event.preventDefault();
+		let index = $(this).siblings('input[name="index"]').val();
+		let count = parseInt($(this).siblings('input[name="count"]').val());
+
+		count = 200;
+		if (count > 0){
+			if (count > 500) count = 500;
+			addItem(index,count);
+		}
+	});
+
+
+	function addItem(item,count = null) {
+		if (count){
+			let elemDom = $('.reels__item-icon[data-item="'+item+'"]')[0];
+			let arrayElem = [];
+			for (let i = 0; i < count; i++) {
+				let elem = elemDom.cloneNode(true);
+				arrayElem.push(elem);
+			}
+			gridTruck.add(arrayElem);
+		} else {
+			let elemDom = $('.reels__item-icon[data-item="'+item+'"]')[0];
+			let elem = elemDom.cloneNode(true);
+			gridTruck.add([elem]);
+		}
+
+	}
+
 })
