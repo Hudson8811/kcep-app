@@ -178,7 +178,13 @@ $(document).ready(function() {
 			$('.car-info__value--height').html((trucks[value]['height']/1000).toFixed(1).replace(".",",")+ ' м.');
 		} else {
 			if (inputChange){
-				console.log(123);
+				let width = parseFloat($('.truck-info__size input[name="truck_width"]').val().replace(',', '.'));
+				let height = parseFloat($('.truck-info__size input[name="truck_height"]').val().replace(',', '.'));
+
+				$('.car__content').css({'width':width*50+'px','height':height*50+'px'});
+
+				$('.car-info__value--width').html(width.toFixed(1).replace(".",",")+ ' м.');
+				$('.car-info__value--height').html(height.toFixed(1).replace(".",",")+ ' м.');
 			} else {
 				$('.truck-info__size input[name="truck_width"]').prop('readonly',false);
 				$('.truck-info__size input[name="truck_height"]').prop('readonly',false);
@@ -238,14 +244,20 @@ $(document).ready(function() {
 			isInside(this);
 		});
 		itemsList(items);
+
+		loadHeight();
 	});
 
 
 	gridTruck.on('dragEnd', function (item, event) {
 		let { left, bottom, right, top } = $('.car__content')[0].getBoundingClientRect();
+		let windowT = window.scrollX;
+		let windowL = window.scrollY;
 		let itemX = event.pageX;
 		let itemY = event.pageY;
-		let isReelDraggedOut = itemX < left || itemX > right || itemY > bottom || itemY < top;
+		let itemW = event.target.width;
+		let itemH = event.target.height;
+		let isReelDraggedOut = itemX+itemW < left+windowL || itemX-10 > right+windowL || itemY-10 > bottom+windowT || itemY+itemH < top+windowT;
 		if (isReelDraggedOut) {
 			gridTruck.remove([item], { removeElements: true })
 		}
@@ -306,6 +318,18 @@ $(document).ready(function() {
 		let isInside = itemX+itemW <= containerW && itemY+itemH <= containerH;
 		if (!isInside){
 			gridTruck.remove([item], { removeElements: true })
+		}
+	}
+
+	function loadHeight(){
+		let height = parseFloat($(gridTruck._element).innerHeight());
+		if (parseFloat(height) > 0){
+			$('.car-info__value--load').html((height/50).toFixed(1).replace(".",",")+ ' м.').css('top',height/2+'px');
+			$('.car-info__line--load-right').css('height',height+'px');
+			$('.car-info__line--load-bottom').css('top',height+'px');
+			$('.car-info__value--load, .car-info__line--load-right, .car-info__line--load-bottom, .car-info__line--load-top').removeClass('hide');
+		} else {
+			$('.car-info__value--load, .car-info__line--load-right, .car-info__line--load-bottom, .car-info__line--load-top').addClass('hide');
 		}
 	}
 
@@ -377,12 +401,108 @@ $(document).ready(function() {
 		let index = $(this).siblings('input[name="index"]').val();
 		let count = parseInt($(this).siblings('input[name="count"]').val());
 
-		count = 200;
+
+	
+		count = 500;
 		if (count > 0){
 			if (count > 500) count = 500;
 			addItem(index,count);
 		}
 	});
+
+	function calcMax(index){
+		//gridTruck.getItems()
+	}
+
+	function haveSpace(index){
+		let container = $('.car__content');
+		let containerW = container.innerWidth()*20;
+		let containerH = container.innerHeight()*20;
+		let reelW = reels[index]['width'];
+		let reelH = reels[index]['height'];
+
+		let items = gridTruck.getItems();
+
+		//прходим каждый мм длины грузовика
+
+		let isEnd = false;
+
+		//Y [x]
+		let loadedCoords = [];
+
+		for (let y = 0; y < containerH; y++) {
+			loadedCoords.push([]);
+		}
+
+		let itemsArray = [];
+
+		$.each(items,function (){
+			itemsArray.push([position.left*20,position.left*20 + this.getWidth()*20,position.top*20,position.top*20 + this.getHeight()*20])
+		});
+
+		for (let y = 0; y < containerH; y++) {
+			if (y + reelH <= containerH ){
+				for (let x = 0; x < containerW; x++) {
+					if (x + reelW <= containerW ){
+						$.each(itemsArray,function (){
+
+						});
+
+					} else {
+						return false;
+					}
+				}
+			} else {
+				return false;
+			}
+		}
+
+
+		/*for (let y = 0; y < containerH; y++) {
+			if (y + reelH <= containerH ){
+				//влез бы по высоте
+				//проверям ширину
+				let coordY = [y,y+reelH];
+
+				for (let x = 0; x < containerW; x++) {
+					if (x + reelW <= containerW ){
+						//влез бы по ширине
+						let coordX = [x,x+reelW];
+
+						//проверяем персечение с другими элементами
+						let isCrossed = false;
+						$.each(items,function (){
+							let width = this.getWidth()*20;
+							let height = this.getHeight()*20;
+							let position = this.getPosition();
+							let left = position.left*20;
+							let top = position.top*20;
+
+							if (coordX.isRangeCrossed([left, left+width],false) && coordY.isRangeCrossed([top, top+height],false)){
+								isCrossed = true;
+								return true;
+							}
+						});
+						//нет пересечений
+						if (!isCrossed){
+							isEnd = true;
+							return true;
+						}
+					} else {
+						break;
+					}
+				}
+			} else {
+				return false;
+			}
+		}*/
+		return false;
+
+
+
+		//range2.isRangeCrossed(range1,false);
+	}
+
 
 
 	function addItem(item,count = null) {
@@ -402,4 +522,26 @@ $(document).ready(function() {
 
 	}
 
+
+	if (typeof (Number.prototype.isBetween) === "undefined") {
+		Number.prototype.isBetween = function (min, max, notBoundaries) {
+			var between = false;
+			if (notBoundaries) {
+				if ((this < max) && (this > min)) between = true;
+			} else {
+				if ((this <= max) && (this >= min)) between = true;
+			}
+			return between;
+		}
+	}
+
+	if (typeof (Array.prototype.isRangeCrossed) === "undefined") {
+		Array.prototype.isRangeCrossed = function (target,notBoundaries) {
+			var result = false;
+			if ((target[0].isBetween(this[0],this[1],notBoundaries) ) || (target[1].isBetween(this[0],this[1],notBoundaries))){
+				result = true;
+			}
+			return result;
+		}
+	}
 })
