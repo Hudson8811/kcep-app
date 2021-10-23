@@ -154,7 +154,7 @@ $(document).ready(function() {
 			let reel = $('.reels__item-icon[data-item="'+index+'"]');
 			reel.css({'width':width+'px','height':height+'px'}).attr('data-size',parseInt(value['width']));
 
-			reel.parent('.reels__item').append('<div class="reels__item-form"><input type="hidden" name="index" value="'+index+'"><input type="number" min="1" maxlength="3" max="500" value="1" name="count"><button type="button" class="js-add-item" name="plus" title="Добавить">+</button><button type="button" class="js-max-item" name="max" title="Автозаполнение">MAX</button></div>');
+			reel.parent('.reels__item').append('<div class="reels__item-form"><div class="reels__item-alert"></div><input type="hidden" name="index" value="'+index+'"><input type="number" onkeypress="return isNumeric(event)" oninput="maxLengthCheck(this)" min="1" maxlength="3"  max="500" value="1" name="count"><button type="button" class="js-add-item" name="plus" title="Добавить">+</button><button type="button" class="js-max-item" name="max" title="Автозаполнение">MAX</button></div>');
 
 			let title = reel.attr('title');
 			if (title){
@@ -192,10 +192,30 @@ $(document).ready(function() {
 		}
 	}
 
+	let startTruckValue = 1;
 	$('input[name=tuck_type]').on('change',function (){
 		let value = $(this).val();
-		setTuckSize(value);
-		gridTruck.layout();
+
+		let height = parseInt(trucks[value]['height'])/20;
+		let currentHeight = $('.content-grid').innerHeight();
+
+		if (currentHeight > height && value != 4){
+			let answer = window.confirm("Часть добавленого груза будет удалена. Продожить изменение размера?");
+			if (answer) {
+				setTuckSize(value);
+				gridTruck.layout();
+				startTruckValue = value;
+			}
+			else {
+				$("input[name=tuck_type]").prop("checked", false);
+				$("input[name=tuck_type][value="+startTruckValue+"]").prop("checked", true);
+				return false;
+			}
+		} else {
+			setTuckSize(value);
+			gridTruck.layout();
+			startTruckValue = value;
+		}
 	});
 
 	$('.truck-info__size').on('change keyup paste',function (){
@@ -315,7 +335,7 @@ $(document).ready(function() {
 		let itemY = item['_tY'];
 		let itemW = item['_width'];
 		let itemH = item['_height'];
-		let isInside = itemX+itemW <= containerW && itemY+itemH <= containerH;
+		let isInside = /*itemX+itemW <= containerW &&*/ itemY+itemH <= containerH;
 		if (!isInside){
 			gridTruck.remove([item], { removeElements: true })
 		}
@@ -373,6 +393,7 @@ $(document).ready(function() {
 					})
 				}
 			});
+			$('.reels__item-alert').slideUp(100);
 		}
 	});
 
@@ -383,6 +404,7 @@ $(document).ready(function() {
 		} else {
 			let item = $(this).find('.reels__item-icon').data('item');
 			addItem(item);
+			$('.reels__item-alert').slideUp(100);
 		}
 	});
 
@@ -392,73 +414,32 @@ $(document).ready(function() {
 		let count = parseInt($(this).siblings('input[name="count"]').val());
 		if (count > 0){
 			if (count > 500) count = 500;
-			addItem(index,count);
+			addItem(index,count)
 		}
 	});
 
 	$(document).on('click','.js-max-item',function (){
 		event.preventDefault();
 		let index = $(this).siblings('input[name="index"]').val();
-		let count = parseInt($(this).siblings('input[name="count"]').val());
 
-
-	
-		count = 500;
+		count = 150;
 		if (count > 0){
 			if (count > 500) count = 500;
-			addItem(index,count);
+			addItem(index,count,true);
 		}
 	});
 
-	function calcMax(index){
-		//gridTruck.getItems()
-	}
-
 	function haveSpace(index){
 		let container = $('.car__content');
-		let containerW = container.innerWidth()*20;
-		let containerH = container.innerHeight()*20;
-		let reelW = reels[index]['width'];
-		let reelH = reels[index]['height'];
+		let containerW = container.innerWidth()*2;
+		let containerH = container.innerHeight()*2;
+		let reelW = reels[index]['width']/10;
+		let reelH = reels[index]['height']/10;
 
 		let items = gridTruck.getItems();
 
 		//прходим каждый мм длины грузовика
-
-		let isEnd = false;
-
-		//Y [x]
-		let loadedCoords = [];
-
 		for (let y = 0; y < containerH; y++) {
-			loadedCoords.push([]);
-		}
-
-		let itemsArray = [];
-
-		$.each(items,function (){
-			itemsArray.push([position.left*20,position.left*20 + this.getWidth()*20,position.top*20,position.top*20 + this.getHeight()*20])
-		});
-
-		for (let y = 0; y < containerH; y++) {
-			if (y + reelH <= containerH ){
-				for (let x = 0; x < containerW; x++) {
-					if (x + reelW <= containerW ){
-						$.each(itemsArray,function (){
-
-						});
-
-					} else {
-						return false;
-					}
-				}
-			} else {
-				return false;
-			}
-		}
-
-
-		/*for (let y = 0; y < containerH; y++) {
 			if (y + reelH <= containerH ){
 				//влез бы по высоте
 				//проверям ширину
@@ -485,7 +466,6 @@ $(document).ready(function() {
 						});
 						//нет пересечений
 						if (!isCrossed){
-							isEnd = true;
 							return true;
 						}
 					} else {
@@ -495,17 +475,11 @@ $(document).ready(function() {
 			} else {
 				return false;
 			}
-		}*/
+		}
 		return false;
-
-
-
-		//range2.isRangeCrossed(range1,false);
 	}
 
-
-
-	function addItem(item,count = null) {
+	function addItem(item,count = null,max = null) {
 		if (count){
 			let elemDom = $('.reels__item-icon[data-item="'+item+'"]')[0];
 			let arrayElem = [];
@@ -513,11 +487,32 @@ $(document).ready(function() {
 				let elem = elemDom.cloneNode(true);
 				arrayElem.push(elem);
 			}
-			gridTruck.add(arrayElem);
+			let addedItems = gridTruck.add(arrayElem);
+
+			if (max === null){
+				let destroyed = 0;
+
+				setTimeout(function (){
+					$.each(addedItems,function (){
+						if (this.isDestroyed()) destroyed++;
+					});
+					if (destroyed > 0){
+						gridTruck.remove(addedItems, { removeElements: true })
+
+						$(elemDom).closest('.reels__item').find('.reels__item-alert').html('MAX - '+(count-destroyed)+' шт.').slideDown(100);
+					} else {
+						$('.reels__item-alert').slideUp(100);
+					}
+
+				},1);
+			} else {
+				$('.reels__item-alert').slideUp(100);
+			}
 		} else {
 			let elemDom = $('.reels__item-icon[data-item="'+item+'"]')[0];
 			let elem = elemDom.cloneNode(true);
 			gridTruck.add([elem]);
+			$('.reels__item-alert').slideUp(100);
 		}
 
 	}
@@ -545,3 +540,21 @@ $(document).ready(function() {
 		}
 	}
 })
+
+
+
+function maxLengthCheck(object) {
+	if (object.value.length > object.max.length)
+		object.value = object.value.slice(0, object.max.length)
+}
+
+function isNumeric (evt) {
+	var theEvent = evt || window.event;
+	var key = theEvent.keyCode || theEvent.which;
+	key = String.fromCharCode (key);
+	var regex = /[0-9]|\./;
+	if ( !regex.test(key) ) {
+		theEvent.returnValue = false;
+		if(theEvent.preventDefault) theEvent.preventDefault();
+	}
+}
