@@ -550,7 +550,7 @@ $(document).ready(function() {
 						$('.reels__item-alert').slideUp(100);
 					}
 
-				},1);
+				},20);
 			} else {
 				$('.reels__item-alert').slideUp(100);
 			}
