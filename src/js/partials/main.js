@@ -190,6 +190,8 @@ $(document).ready(function() {
 				$('.truck-info__size input[name="truck_height"]').prop('readonly',false);
 			}
 		}
+
+		checkAllFeet();
 	}
 
 	let startTruckValue = 1;
@@ -226,11 +228,11 @@ $(document).ready(function() {
 
 	var gridTruck = new Muuri('.content-grid', {
 		items: '.reels__item-icon',
-		showDuration: 100,
+		showDuration: 50,
 		showEasing: 'ease',
-		hideDuration: 100,
+		hideDuration: 50,
 		hideEasing: 'ease',
-		layoutDuration: 100,
+		layoutDuration: 50,
 		layoutEasing: 'cubic-bezier(0.625, 0.225, 0.100, 0.890)',
 
 		// Drag & Drop
@@ -259,15 +261,24 @@ $(document).ready(function() {
 		//console.log(gridTruck);
 	});
 
+	let updateInfoTimer;
+
 	gridTruck.on('layoutEnd', function (items) {
 		$(items).each(function (){
 			isInside(this);
 		});
-		itemsList(items);
 
-		loadHeight();
+		if (updateInfoTimer){
+			clearTimeout(updateInfoTimer);
+		}
+
+		updateInfoTimer = setTimeout(function (){
+			itemsList(items);
+			loadHeight();
+		},100);
 	});
 
+	let checkTimer;
 
 	gridTruck.on('dragEnd', function (item, event) {
 		let { left, bottom, right, top } = $('.car__content')[0].getBoundingClientRect();
@@ -280,6 +291,17 @@ $(document).ready(function() {
 		let isReelDraggedOut = itemX+itemW < left+windowL || itemX-10 > right+windowL || itemY-10 > bottom+windowT || itemY+itemH < top+windowT;
 		if (isReelDraggedOut) {
 			gridTruck.remove([item], { removeElements: true })
+			if (checkTimer){
+				clearTimeout(checkTimer);
+			}
+			checkAllFeet();
+		} else {
+			if (checkTimer){
+				clearTimeout(checkTimer);
+			}
+			checkTimer = setTimeout(function (){
+				checkAllFeet();
+			},500)
 		}
 	});
 
@@ -290,6 +312,8 @@ $(document).ready(function() {
 	gridTruck.on('remove', function (items, indices) {
 
 	});
+
+
 
 	function itemsList(items){
 		let list = [];
@@ -369,6 +393,7 @@ $(document).ready(function() {
 
 		setTimeout(function (){
 			$('.js-truck-sort').prop('disabled', false);
+			checkAllFeet();
 		},300);
 	});
 	$('.js-truck-clear').on('click',function (){
@@ -377,6 +402,7 @@ $(document).ready(function() {
 
 		setTimeout(function (){
 			$('.js-truck-clear').prop('disabled', false);
+			checkAllFeet();
 		},300);
 	});
 
@@ -485,12 +511,32 @@ $(document).ready(function() {
 			let arrayElem = [];
 			for (let i = 0; i < count; i++) {
 				let elem = elemDom.cloneNode(true);
+				elem.classList.add('opacity');
 				arrayElem.push(elem);
 			}
 			let addedItems = gridTruck.add(arrayElem);
 
 			if (max === null){
 				let destroyed = 0;
+
+
+				/*
+				let containerW = $('.car__content').innerWidth();
+				let containerH = $('.car__content').innerHeight();
+
+				$.each(addedItems,function (){
+					if (this['_left']+this['_width'] > containerW || this['_top']+this['_height'] > containerH){
+						destroyed++;
+					}
+				});
+				if (destroyed > 0){
+					gridTruck.remove(addedItems, { removeElements: true })
+
+					$(elemDom).closest('.reels__item').find('.reels__item-alert').html('MAX - '+(count-destroyed)+' шт.').slideDown(100);
+				} else {
+					$('.reels__item-alert').slideUp(100);
+				}
+				*/
 
 				setTimeout(function (){
 					$.each(addedItems,function (){
@@ -508,6 +554,9 @@ $(document).ready(function() {
 			} else {
 				$('.reels__item-alert').slideUp(100);
 			}
+			setTimeout(function (){
+				$('.content-grid .reels__item-icon').removeClass('opacity');
+			},50);
 		} else {
 			let elemDom = $('.reels__item-icon[data-item="'+item+'"]')[0];
 			let elem = elemDom.cloneNode(true);
@@ -515,7 +564,35 @@ $(document).ready(function() {
 			$('.reels__item-alert').slideUp(100);
 		}
 
+		checkAllFeet();
 	}
+
+	function checkAllFeet(){
+		setTimeout(function (){
+			$('.reels .reels__item-icon').each(function (i,ele){
+				setTimeout(function() {
+					let elem = ele.cloneNode(true);
+					let parent = $(ele).closest('.reels__item');
+					elem.classList.add('opacity');
+					let added = gridTruck.add([elem]);
+					let destroyed = 0;
+					setTimeout(function (){
+						$.each(added,function (){
+							if (this.isDestroyed()) destroyed++;
+						});
+						if (destroyed > 0){
+							parent.addClass('disable');
+						} else {
+							parent.removeClass('disable');
+						}
+						gridTruck.remove(added, { removeElements: true })
+
+					},1);
+				}, (i+1)*5);
+			});
+		},100);
+	}
+
 
 
 	if (typeof (Number.prototype.isBetween) === "undefined") {

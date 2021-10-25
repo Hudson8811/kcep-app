@@ -234,6 +234,13 @@ body {
 			}
 		}
 
+		&.disable{
+			pointer-events: none;
+			user-select: none;
+			filter: grayscale(1);
+			opacity: 0.5;
+		}
+
 		&-icon{
 			display: flex;
 			align-items: center;
@@ -332,6 +339,10 @@ body {
 
 .hide{
 	display: none;
+}
+
+.opacity{
+	opacity: 0 !important;
 }
 
 .content-grid {
