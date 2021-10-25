@@ -588,7 +588,7 @@ $(document).ready(function() {
 						gridTruck.remove(added, { removeElements: true })
 
 					},1);
-				}, (i+1)*5);
+				}, (i+1)*20);
 			});
 		},100);
 	}
