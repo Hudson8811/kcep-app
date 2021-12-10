@@ -20,46 +20,9 @@ $(document).ready(function() {
 
 
 	let reels = {
-		'8': {
-			width: 665,
-			height: 855,
-		},
-		'10': {
-			width: 640,
-			height: 1055,
-		},
-		'12a': {
-			width: 860,
-			height: 1275,
-		},
-		'14': {
-			width: 860,
-			height: 1455,
-		},
-		'14g': {
-			width: 1050,
-			height: 1455,
-		},
-		'17': {
-			width: 900,
-			height: 1765,
-		},
-		'17us': {
-			width: 940,
-			height: 1765,
-		},
-		'18a': {
-			width: 1310,
-			height: 1870,
-		},
-
 		'opt8': {
 			width: 705,
 			height: 855,
-		},
-		'opt9': {
-			width: 520,
-			height: 955,
 		},
 		'opt10': {
 			width: 680,
@@ -89,10 +52,6 @@ $(document).ready(function() {
 			width: 950,
 			height: 1765,
 		},
-		'opt18': {
-			width: 1170,
-			height: 1870,
-		},
 		'opt18a': {
 			width: 1390,
 			height: 1870,
@@ -113,12 +72,16 @@ $(document).ready(function() {
 			width: 1680,
 			height: 2600,
 		},
+		'opt22': {
+			width: 1360,
+			height: 2200,
+		},
+		'opt22b': {
+			width: 1360,
+			height: 2200,
+		},
 
 		'okko1': {
-			width: 435,
-			height: 490,
-		},
-		'okko1k': {
 			width: 435,
 			height: 490,
 		},
@@ -130,17 +93,9 @@ $(document).ready(function() {
 			width: 435,
 			height: 650,
 		},
-		'okko3k': {
-			width: 435,
-			height: 650,
-		},
 		'okko4': {
 			width: 520,
 			height: 650,
-		},
-		'okko6k': {
-			width: 608,
-			height: 740,
 		},
 	}
 
